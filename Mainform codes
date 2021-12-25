@@ -1,0 +1,113 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace Musteri_Kayıt1._2
+{
+    public partial class FrmAna : Form
+    {
+        public FrmAna()
+        {
+            InitializeComponent();
+        }
+
+        SqlConnection baglanti = new SqlConnection("Data Source=DESKTOP-932DB3S;Initial Catalog=Müşteri_Veri;Integrated Security=True");
+        
+        void clear()
+        {
+            txtAD.Text = "";
+            txtSoyad.Text = "";
+            cmbsehir.Text = "";
+            mskTel.Text = "";
+        }
+
+        private void btnlistele_Click(object sender, EventArgs e)
+        {
+            this.musteri_veriTabloTableAdapter.Fill(this.müşteri_VeriDataSet1.Musteri_veriTablo);
+        }
+
+        private void btnkaydet_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komutkaydet = new SqlCommand("insert into Musteri_veriTablo (Ad,Soyad,Sehir,Telno) values (@p1,@p2,@p3,@p4)", baglanti);
+            komutkaydet.Parameters.AddWithValue("@p1", txtAD.Text);
+            komutkaydet.Parameters.AddWithValue("@p2",txtSoyad.Text);
+            komutkaydet.Parameters.AddWithValue("@p3",cmbsehir.Text);
+            komutkaydet.Parameters.AddWithValue("@p4",mskTel.Text);
+            komutkaydet.ExecuteNonQuery();
+            baglanti.Close();
+            MessageBox.Show("Müşteri kaydedildi");
+        }
+
+        private void btntemizle_Click(object sender, EventArgs e)
+        {
+            clear();
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int secilen=dataGridView1.SelectedCells[0].RowIndex;
+            txtID.Text=dataGridView1.Rows[secilen].Cells[0].Value.ToString();
+            txtAD.Text = dataGridView1.Rows[secilen].Cells[1].Value.ToString();
+            txtSoyad.Text = dataGridView1.Rows[secilen].Cells[2].Value.ToString();
+            cmbsehir.Text = dataGridView1.Rows[secilen].Cells[3].Value.ToString();
+            mskTel.Text = dataGridView1.Rows[secilen].Cells[4].Value.ToString();
+        }
+
+        private void btnsil_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komutsil=new SqlCommand("Delete from musteri_veritablo where ID=@k1",baglanti);
+            komutsil.Parameters.AddWithValue("@k1", txtID.Text);
+            komutsil.ExecuteNonQuery();
+            baglanti.Close();
+            MessageBox.Show("Müşteri silindi");
+        }
+
+        private void btnguncelle_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komutupdate = new SqlCommand("Update Musteri_VeriTablo set Ad=@a1,Soyad=@a2,Sehir=@a3,Telno=@a4 where ID=@a5", baglanti);
+            komutupdate.Parameters.AddWithValue("@a1", txtAD.Text);
+            komutupdate.Parameters.AddWithValue("@a2", txtSoyad.Text);
+            komutupdate.Parameters.AddWithValue("@a3", cmbsehir.Text);
+            komutupdate.Parameters.AddWithValue("@a4",mskTel.Text);
+            komutupdate.Parameters.AddWithValue("@a5", txtID.Text);
+            komutupdate.ExecuteNonQuery();
+            baglanti.Close();
+            MessageBox.Show("Müşteri güncellendi");
+        }
+
+        private void steelBlueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.BackColor = Color.SteelBlue;
+        }
+
+        private void orangeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.BackColor = Color.Orange;
+        }
+
+        private void forestGreenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.BackColor=Color.ForestGreen;
+        }
+
+        private void darkVioletToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.BackColor = Color.DarkViolet;
+        }
+
+        private void hakkımızdaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Bu proje Ahmet Kulim tarafından oluşturulmuştur.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+}
